@@ -18,8 +18,7 @@ export default function ThemeRoutes() {
 
     const [userInfo,setUserInfo]=useState<any>({})
 
-    useEffect(()=>{console.log(isLogin)},[isLogin])
-
+ 
     const changeIsLogIn=(data:boolean)=>{
         setIsLogIn(data)
     }

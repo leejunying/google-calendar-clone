@@ -18,7 +18,7 @@ const Dashboard = () => {
     //render chart
   const renderChart = () => {
     if (display == "day") return <DayChart onOpen={onOpen} />;
-    if (display == "month") return <MonthChart onOpen={onOpen} />;
+    if (display == "month") return <MonthChart />;
   };
   //Modal
   const [isOpen,setIsOpen]=useState<boolean>(false)
@@ -26,6 +26,8 @@ const Dashboard = () => {
   const onClose=()=>{
     setIsOpen(false)
   }
+  <DateModal isOpen={isOpen} onClose={onClose}  ></DateModal>
+
 
   const onOpen=()=>{
     setIsOpen(true)
@@ -58,7 +60,8 @@ const Dashboard = () => {
           md={2}
           xs={6}
           style={{
-            maxWidth: "258px",
+              
+             width:"100%",
             backgroundColor: "#FFFFF",
             overflow: matches ? "scroll" : "hidden",
             overflowX: "hidden",
@@ -67,9 +70,9 @@ const Dashboard = () => {
         >
           <Sidebar></Sidebar>
         </Grid>
-        <Grid md={10} xs={6} item={true}>
+        <Grid style={{overflowY:"scroll"}} md={10} xs={6} item={true}>
           {renderChart()}
-          <DateModal isOpen={isOpen} onClose={onClose} data={{month:11,year:2022,day:10}}></DateModal>
+          
 
         </Grid>
       </Grid>

@@ -1,5 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers } from "@reduxjs/toolkit";
 import dataReducer from "./Reducers/globaldata"
+import eventsReducer from "./Reducers/events"
 import {
   persistStore,
   persistReducer,
@@ -17,11 +19,13 @@ const persistConfig = {
   storage,
 };
 
+
 const persistedData  = persistReducer(persistConfig,dataReducer);
+const persistedEvent=persistReducer(persistConfig,eventsReducer)
  
 
  const store = configureStore({
-  reducer: { data:persistedData  },
+  reducer: { data:persistedData,events:persistedEvent  },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

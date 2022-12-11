@@ -61,7 +61,8 @@ const DayChart = ({onOpen}:IDayChart) => {
       style={{
         width:"100%",
         height: "90vh",
-        
+        marginTop:"16px",
+         
         position: "relative",
         overflow: "scroll",
         overflowX: "hidden",

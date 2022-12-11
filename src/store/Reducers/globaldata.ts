@@ -1,4 +1,6 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice  } from "@reduxjs/toolkit";
+
+ 
 
 export const dataSlice = createSlice({
   name: "data",
@@ -6,10 +8,10 @@ export const dataSlice = createSlice({
     month:0,
     year:0,
     day:0,
-    events:[],
-    userid:"",
+     userid:"",
     display:"month",
     selectedDate:0,
+    selectedEvent:0,
     
   },
   reducers: {
@@ -19,9 +21,7 @@ export const dataSlice = createSlice({
     logout:(state,action)=>{
       state.userid=""
     },
-    updatevents:(state,action)=>{
-       state.events=action.payload
-    },
+ 
     updatedate:(state,action)=>{
       state.year=action.payload?.year
       state.month=action.payload?.month
@@ -34,7 +34,13 @@ export const dataSlice = createSlice({
     },
     updatedateselect:(state,action)=>{
       state.selectedDate=action.payload
-    }
+    },
+    updateventid:(state,action)=>{
+
+      console.log("actionid",action.payload)
+
+      state.selectedEvent=action.payload
+    },
     
     
      
@@ -42,7 +48,7 @@ export const dataSlice = createSlice({
 });
 
 //Action
-export const { login,logout,updatevents,updatedisplay,updatedate,updatedateselect
+export const { login,logout,updatedisplay,updatedate,updatedateselect,updateventid
 } = dataSlice.actions;
 
 export default dataSlice.reducer;

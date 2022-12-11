@@ -25,11 +25,15 @@ export const SevenColGrid = styled.div`
      border-top:none;
     border-left: none;
     background-color: white;
-    min-height: 178px;
+    min-height: 164px;
     margin-top: -14px;
     font-size: 16px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    &:hover{
+      opacity: 0.7;
+    }
+ 
     cursor: pointer;
   }
   .active {

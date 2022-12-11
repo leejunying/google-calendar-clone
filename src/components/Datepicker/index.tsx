@@ -11,7 +11,7 @@ import {
 } from "../../utils/index";
 import { Header, Body, SevenColGrid } from "./styled";
 import { useSelector,useDispatch } from "react-redux";
- import { updatedate } from "../../store/Reducers/globaldata";
+ import { updatedate, updatedateselect} from "../../store/Reducers/globaldata";
 const DatePickerComponent = () => {
   //state
   const nowday=new Date()
@@ -35,6 +35,11 @@ const DatePickerComponent = () => {
   const handleSelection=(day:any)=>{
 
     setSelectedDate(new Date(data?.year,data?.month,day))
+
+    let select =new Date(data?.year,data?.month,day)
+    select.setHours(0,0,0,0)
+
+    dispatch(updatedateselect(select.getTime()))
 
   } 
   
@@ -90,7 +95,7 @@ const DatePickerComponent = () => {
             <p key={day}  onClick={()=>handleSelection(day)}
             
             className={
-                selectedDate?.getTime()=== new Date(data?.year,data?.month,day).getTime() ?"active":
+                data?.selectedDate=== new Date(data?.year,data?.month,day,0,0,0,0).getTime() ?"active":
                 new Date(data?.year,data?.month,day).getTime() < new Date(nowday.getFullYear(),nowday.getMonth(),nowday.getDate()).getTime()?"oldday":
                 new Date(nowday.getFullYear(),nowday.getMonth(),nowday.getDate()).getTime()===new Date(data?.year,data?.month,day).getTime()?"today":""
               

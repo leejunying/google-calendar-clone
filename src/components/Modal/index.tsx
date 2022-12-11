@@ -1,21 +1,31 @@
-import react, { useState } from "react";
-import { Box, TextField, FormControlLabel,Grid,FormControl,FormLabel } from "@mui/material";
+import react, { useEffect, useState } from "react";
+import {
+  Box,
+  TextField,
+  FormControlLabel,
+  Grid,
+  FormControl,
+  FormLabel,
+  Select,
+} from "@mui/material";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
- import { useForm, SubmitHandler, Controller } from "react-hook-form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import DatePicker from "react-multi-date-picker";
 import { useDispatch, useSelector } from "react-redux";
-import { updatevents } from "../../store/Reducers/globaldata";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
+import { updatevents } from "../../store/Reducers/events";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
 const style = {
   position: "absolute" as "absolute",
   top: "45%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 500,
-  height: 550,
+  height: 600,
   bgcolor: "background.paper",
   border: "1px solid #000",
   boxShadow: 24,
@@ -25,44 +35,69 @@ const style = {
 interface IModal {
   onClose: () => any;
   isOpen: boolean;
-  data: any;
 }
 
-export default function DateModal({ isOpen, data, onClose }: IModal) {
+export default function DateModal({ isOpen, onClose }: IModal) {
   //picker format
   const format = "DD/MM/YYYY";
 
   //global state
-  const selectedDate = useSelector((state: any) => state?.data?.selectedDate);
+  const events = useSelector((state: any) => state?.events?.todos);
+  const eventid=useSelector((state:any)=>state?.data.selectedEvent)
   const dispatch = useDispatch();
+
+
   //stepup hook form
   const {
     handleSubmit,
     control,
+    setValue,
     // formState: { isSubmitting },
-    register,
-    watch,
+    reset,
   } = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
   });
+
+
+    //mount
+
+    useEffect(()=>{
+      reset({})
+      if(eventid)
+      { 
+        const data=events[eventid-1]
+        setValue('describe',data.describe)
+        setValue('fromtime',data.fromtime)
+        setValue('totime',data.totime)
+        setValue('type',data.type)
+        setValue('title',data.title)
+        setValue('index',data.index)
+        setValue('fromhour',data.fromhour)
+        setValue('tohour',data.tohour)
+      }
+   
+      
+  
+    },[])
   //function
   const onSubmit = (data: any) => {
-    const fromdate = new Date(
-      data.fromdate.year,
-      data.fromdate.month.number,
-      data.fromdate.day
+
+    
+    let fromdate = new Date(
+      `${data.fromdate.year}-${data.fromdate.month.number}-${data.fromdate.day}`
     );
-    const todate = new Date(
-      data.todate.year,
-      data.todate.month.number,
-      data.todate.day
+    let todate = new Date(
+      `${data.todate.year}-${data.todate.month.number}-${data.todate.day}`
     );
+
+    fromdate.setHours(0, 0, 0, 0);
+    todate.setHours(0, 0, 0, 0);
 
     var fromtime = 0;
     var totime = 0;
 
-    if (fromdate.getTime() > todate.getTime()) {
+    if (fromdate > todate) {
       fromtime = fromdate.getTime();
       totime = todate.getTime();
     } else {
@@ -70,17 +105,19 @@ export default function DateModal({ isOpen, data, onClose }: IModal) {
       fromtime = todate.getTime();
     }
 
+ 
     const objevent = {
+      index:events.length+1,
       title: data?.title ? data.title : "No title",
       describe: data?.describe ? data.describe : "No describe",
       fromtime: fromtime,
       totime: totime,
-      meeting: data?.meeting,
-      personal: data?.personal,
-      specail: data?.specail,
-    };
-    console.log(data)
+      type: data?.type,
       
+    };
+    console.log("obj",objevent)
+     dispatch(updatevents(objevent));
+    reset({});
     onClose();
   };
   return (
@@ -146,7 +183,7 @@ export default function DateModal({ isOpen, data, onClose }: IModal) {
                     <DatePicker
                       format={format}
                       style={{ fontSize: "16px", width: "120px" }}
-                      value={selectedDate ? selectedDate : value ? value : ""}
+                      value={value || ""}
                       onChange={(date: any) => {
                         onChange(date?.isValid ? date : "");
                       }}
@@ -169,47 +206,133 @@ export default function DateModal({ isOpen, data, onClose }: IModal) {
                     <DatePicker
                       format={format}
                       style={{ fontSize: "16px", width: "120px" }}
-                      value={selectedDate ? selectedDate : value ? value : ""}
+                      value={value || ""}
                       onChange={(date: any) => {
+                        let datadate = new Date(
+                          date.year,
+                          date.month.number,
+                          date.day
+                        );
                         onChange(date?.isValid ? date : "");
                       }}
                     />
                   </>
                 )}
               />
+            </Grid> <Grid xs={7} display="flex" justifyContent="space-between">
+              <Grid xs={6} display="flex" alignItems="center">
+                <FormLabel style={{marginRight:"10px"}} component="legend">Time </FormLabel>
+                <FormControl component="fieldset">
+                  <Controller
+                    rules={{ required: true }}
+                    control={control}
+                    name="fromhour"
+                    render={({ field }) => (
+                      <Select style={{height:"35px"}} {...field} defaultValue={0}>
+                        <MenuItem value={0}>0</MenuItem>
+                        <MenuItem value={1}>1</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                        <MenuItem value={4}>4</MenuItem>
+                        <MenuItem value={5}>5</MenuItem>
+                        <MenuItem value={6}>6</MenuItem>
+                        <MenuItem value={7}>7</MenuItem>
+                        <MenuItem value={8}>8</MenuItem>
+                        <MenuItem value={9}>9</MenuItem>
+                        <MenuItem value={10}>10</MenuItem>
+                        <MenuItem value={11}>11</MenuItem>
+                        <MenuItem value={12}>12</MenuItem>
+                        <MenuItem value={13}>13</MenuItem>
+                        <MenuItem value={14}>14</MenuItem>
+                        <MenuItem value={15}>15</MenuItem>
+                        <MenuItem value={16}>16</MenuItem>
+                        <MenuItem value={17}>17</MenuItem>
+                        <MenuItem value={18}>18</MenuItem>
+                        <MenuItem value={19}>19</MenuItem>
+                        <MenuItem value={20}>20</MenuItem>
+                        <MenuItem value={21}>21</MenuItem>
+                        <MenuItem value={22}>22</MenuItem>
+                        <MenuItem value={23}>23</MenuItem>
+                      </Select>
+                    )}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid xs={6} display="flex" alignItems="center">
+                <FormLabel style={{marginRight:"20px"}} component="legend"> to </FormLabel>
+                <FormControl component="fieldset">
+                  <Controller
+                    rules={{ required: true }}
+                    control={control}
+                    name="tohour"
+                    render={({ field }) => (
+                      <Select style={{height:"35px"}} {...field} defaultValue={0}>
+                        <MenuItem value={0}>0</MenuItem>
+                        <MenuItem value={1}>1</MenuItem>
+                        <MenuItem value={2}>2</MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                        <MenuItem value={4}>4</MenuItem>
+                        <MenuItem value={5}>5</MenuItem>
+                        <MenuItem value={6}>6</MenuItem>
+                        <MenuItem value={7}>7</MenuItem>
+                        <MenuItem value={8}>8</MenuItem>
+                        <MenuItem value={9}>9</MenuItem>
+                        <MenuItem value={10}>10</MenuItem>
+                        <MenuItem value={11}>11</MenuItem>
+                        <MenuItem value={12}>12</MenuItem>
+                        <MenuItem value={13}>13</MenuItem>
+                        <MenuItem value={14}>14</MenuItem>
+                        <MenuItem value={15}>15</MenuItem>
+                        <MenuItem value={16}>16</MenuItem>
+                        <MenuItem value={17}>17</MenuItem>
+                        <MenuItem value={18}>18</MenuItem>
+                        <MenuItem value={19}>19</MenuItem>
+                        <MenuItem value={20}>20</MenuItem>
+                        <MenuItem value={21}>21</MenuItem>
+                        <MenuItem value={22}>22</MenuItem>
+                        <MenuItem value={23}>23</MenuItem>
+                      </Select>
+                    )}
+                  />
+                </FormControl>
+              </Grid>
             </Grid>
-             
-            <Grid xs={12} display="flex" justifyContent={"space-between"}>
+
             
-            <FormControl component="fieldset">
-  <FormLabel component="legend">Promoting</FormLabel>
-  <Controller
-    rules={{ required: true }}
-    control={control}
-    name="promoting2"
-    render={({ field }) => (
-      <RadioGroup {...field}>
-        <FormControlLabel
-          value="personal"
-          control={<Radio color="info" />}
-          label="Personal"
-        />
-        <FormControlLabel
-          value="meeting"
-          control={<Radio color="success" />}
-          label="Meeting"
-        />
-        <FormControlLabel
-          value="specail"
-          control={<Radio color="warning"/>}
-          label="Special"
-        />
-      </RadioGroup>
-    )}
-  />
-</FormControl>
+
+            <Grid xs={12} display="flex" justifyContent={"space-between"}>
+              <FormControl component="fieldset">
+                <FormLabel component="legend">Event type</FormLabel>
+                <Controller 
               
+                  rules={{ required: true }}
+                  control={control}
+                  name="type"
+                  render={({ field }) => (
+  
+                    <RadioGroup   {...field}>
+                      <FormControlLabel
+                        value="personal"
+                        control={<Radio color="info" />}
+                        label="Personal"
+                      />
+                      <FormControlLabel
+                        value="meeting"
+                        control={<Radio color="success" />}
+                        label="Meeting"
+                      />
+                      <FormControlLabel
+                        value="specail"
+                        control={<Radio color="warning" />}
+                        label="Special"
+                      />
+                    </RadioGroup>
+                  )}
+                />
+              </FormControl>
             </Grid>
+
+           
 
             <Button
               style={{ marginTop: "30px" }}
@@ -218,7 +341,7 @@ export default function DateModal({ isOpen, data, onClose }: IModal) {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              SAVE
+              {eventid?"Update":"Save"}
             </Button>
           </Box>
         </Box>
