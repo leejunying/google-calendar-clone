@@ -134,6 +134,9 @@ const Login = ({  changeIsLogIn,setUserData }: ILogin) => {
             </Grid>
           </Grid>
         </Boxform>
+
+        <p>Type anything to login if not errors</p>
+
         <BoxFooter>
           <LInk to="/register">Tạo tài khoản mới</LInk>
         </BoxFooter>
